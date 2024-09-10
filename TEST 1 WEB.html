@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Activities</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Grade Activities</h1>
+    <button onclick="addActivity()">Add Activity</button>
+    <input type="text" id="activity" placeholder="Activity">
+    <input type="number" id="weight" placeholder="Weight">
+    <br><br>
+    <button onclick="addGrade()">Add Grade</button>
+    <input type="number" id="grade" placeholder="Grade">
+    <input type="number" id="activityNo" placeholder="Activity no">
+    <br><br>
+    <button onclick="deleteActivity()">Delete Activity</button>
+    <br><br>
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Activity</th>
+                <th>Percentage</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody id="activityTable">
+            <!-- Activities will be added here -->
+        </tbody>
+    </table>
+    <p id="errorMessage" class="error"></p>
+
+    <script>
+        let activities = [];
+        let activityCount = 0;
+
+        function addActivity() {
+            const activity = document.getElementById('activity').value;
+            const weight = document.getElementById('weight').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (!activity) {
+                errorMessage.textContent = 'Error Message: Activity name is rejected.';
+                return;
+            }
+            if (!weight || weight < 1 || weight > 100) {
+                errorMessage.textContent = 'Error Message: Weight is rejected.';
+                return;
+            }
+
+            activityCount++;
+            activities.push({ no: activityCount, activity, weight, grade: '-' });
+            renderTable();
+            document.getElementById('activity').value = '';
+            document.getElementById('weight').value = '';
+            errorMessage.textContent = '';
+        }
+
+        function addGrade() {
+            const grade = document.getElementById('grade').value;
+            const activityNo = document.getElementById('activityNo').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (!grade || grade < 0 || grade > 100) {
+                errorMessage.textContent = 'Error Message: Grade is rejected.';
+                return;
+            }
+            const activity = activities.find(act => act.no == activityNo);
+            if (!activity) {
+                errorMessage.textContent = 'Error Message: Activity No is rejected.';
+                return;
+            }
+
+            activity.grade = grade;
+            renderTable();
+            document.getElementById('grade').value = '';
+            document.getElementById('activityNo').value = '';
+            errorMessage.textContent = '';
+        }
+
+        function deleteActivity() {
+            const errorMessage = document.getElementById('errorMessage');
+            if (activities.length === 0) {
+                errorMessage.textContent = 'Error Message: No more activities to remove.';
+                return;
+            }
+
+            activities.pop();
+            renderTable();
+            errorMessage.textContent = '';
+        }
+
+        function renderTable() {
+            const tableBody = document.getElementById('activityTable');
+            tableBody.innerHTML = '';
+            activities.forEach(activity => {
+                const row = `<tr>
+                    <td>${activity.no}</td>
+                    <td>${activity.activity}</td>
+                    <td>${activity.weight}</td>
+                    <td>${activity.grade}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+    </script>
+</body>
+</html>
